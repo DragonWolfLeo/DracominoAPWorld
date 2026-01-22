@@ -131,12 +131,6 @@ class DracominoItemPool:
             # Add to location shape values
             self.location_shape_value_costs.append(_shape_value)
 
-        # # Create region order
-        # if options.spherical_distribution.value > 0:
-        #     # Give shapes their own region and shuffle
-        #     self.region_order = self.shapes.copy()
-        #     world.random.shuffle(self.region_order)
-
     def create_item(self, world:World, name: str) -> DracominoItem:
         itemtype = (
             item_data_table[name].type if name in item_name_to_id

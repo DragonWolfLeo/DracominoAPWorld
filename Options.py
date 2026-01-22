@@ -158,17 +158,6 @@ class MaxStackingHeight(Range):
     range_start = 0
     range_end = 100
 
-# class SphericalDistribution(Range):
-#     """
-#     TODO: Delete this completely. It's too jank and not worth it at all.
-#     EXPERIMENTAL (Percentage) Make shape distribution sphere-based, making it more likely to get specific shapes as the multiworld progresses?
-#     Set to zero to turn off and have pure randomization.
-#     """
-#     display_name = "Spherical Distribution"
-#     default = 0
-#     range_start = 0
-#     range_end = 80
-
 class DeathOnRestart(Toggle):
     """
     When Death Link is enabled, send a death whenever you reset your board?
@@ -191,7 +180,6 @@ class DracominoOptions(PerGameCommonOptions):
     next_piece_slots: NextPieceSlots
     hold_slots: HoldSlots
     max_stacking_height: MaxStackingHeight
-    # spherical_distribution: SphericalDistribution
     # trap_items: TrapItems
     death_link: DeathLink
     death_on_restart: DeathOnRestart

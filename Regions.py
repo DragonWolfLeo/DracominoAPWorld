@@ -18,7 +18,8 @@ def create_regions(multiworld: MultiWorld, player: int, options:DracominoOptions
         "Menu": DracominoRegionData([], []),
     }
     
-    # Build unbalanced region table, each connected to the next
+    # Build region table, each connected to the next
+    # TODO: Right now there's no extra regions, but keeping this code here in case I do need it??
     for region_name in itempool.region_order:
         region_data_table[region_name] = DracominoRegionData([], [])
         region_name_list.append(region_name)
@@ -93,18 +94,6 @@ def create_regions(multiworld: MultiWorld, player: int, options:DracominoOptions
         new_region = Region(region_name, player, multiworld)
         multiworld.regions.append(new_region)
 
-    # # Stuff for setting up the entrance rule
-    # SHAPES_IN_THE_MULTIWORLD:Dict[str, int] = {
-    #     **{shape_name: itempool.normal_itempool.count(shape_name) for shape_name in itempool.shapes}
-    # }
-    # SHAPE_INBALANCED_REGION_FRACTION_THRESHOLD = options.spherical_distribution.value/100
-    # def most_of_shape_rule(shape:str) -> Optional[Callable[[CollectionState], bool]]:
-    #     _threshold:int = math.floor(SHAPES_IN_THE_MULTIWORLD.get(shape, 0) * SHAPE_INBALANCED_REGION_FRACTION_THRESHOLD)
-    #     # print("Making rule for ", shape, " needing amount: ", _threshold)
-    #     if _threshold == 0:
-    #         return None
-    #     return lambda state: state.has(shape, player, _threshold)
-
     # Create locations and entrances and rules
     for region_name in region_name_list:
         region_data = region_data_table[region_name]
@@ -117,11 +106,6 @@ def create_regions(multiworld: MultiWorld, player: int, options:DracominoOptions
             for exit_name in region_data.connecting_regions:
                 entrance = Entrance(player, f"{region_name} -> {exit_name}", region)
                 entrance.connect(world.get_region(exit_name))
-                # if exit_name in itempool.shapes:
-                #     print("Connecting", region_name, "to", exit_name)
-                #     shape_rule = most_of_shape_rule(exit_name)
-                #     if shape_rule:
-                #         entrance.access_rule = shape_rule
                 region.exits.append(entrance)
 
     # Apply shape value distances to locations
