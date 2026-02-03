@@ -13,9 +13,9 @@ SHAPE_VALUES = {
 
 ITEMS = [
     # Abilities (1-100)
-    [1,   "Gravity",                  [ "useful", "ability" ] ],
-    [2,   "Soft Drop",                [ "useful", "ability" ] ],
-    [3,   "Hard Drop",                [ "useful", "ability" ] ],
+    [1,   "Gravity",                  [ "useful", "ability", "drop" ] ],
+    [2,   "Soft Drop",                [ "useful", "ability", "drop" ] ],
+    [3,   "Hard Drop",                [ "useful", "ability", "drop" ] ],
     [4,   "Rotate Clockwise",         [ "progression", "ability", "rotate" ] ],
     [5,   "Rotate Counterclockwise",  [ "progression", "ability", "rotate" ] ],
     [6,   "Ghost Piece",              [ "useful", "ability" ] ],

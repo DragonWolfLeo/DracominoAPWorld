@@ -1,7 +1,7 @@
-from typing import Dict, List, FrozenSet
+from typing import Dict, List, FrozenSet, Set
 from worlds.AutoWorld import World
 from BaseClasses import ItemClassification as IC
-from .Items import item_data_table, item_name_to_id, DracominoItem
+from .Items import item_data_table, item_name_to_id, DracominoItem, DracominoItemData
 from .Options import DracominoOptions
 from .Constants import BOARD_WIDTH
 from . import Util
@@ -55,15 +55,29 @@ class DracominoItemPool:
 
         start_inventory_as_set:FrozenSet = frozenset(options.start_inventory.value.keys())
 
+        # Filter items # TODO: Do filtering here when ability sets are implemented
+        blacklist:Set[str] = set(name for name in start_inventory_as_set if (
+            "ability" in item_data_table[name].tags and not "progressive" in item_data_table[name].tags
+        )) # Don't add non-progressive abilities that are already in start inventory
+        filtered_item_data_table:Dict[str, DracominoItemData] = {name: item for name, item in item_data_table.items() if not name in blacklist}
+
+        # Choose early items
+        def _set_early_item(item_name:str):
+            world.multiworld.early_items[world.player][item_name] = 1
+        if options.early_rotate.value:
+            _set_early_item(world.random.choice([name for name, item in filtered_item_data_table.items() if "rotate" in item.tags]))
+        if options.early_second_drop.value:
+            _set_early_item(world.random.choice([name for name, item in filtered_item_data_table.items() if "drop" in item.tags]))
+
         # Build shape whitelist
         whitelisted_shape_types = [shape_type for shape_type, weight in SHAPE_WEIGHTS.items() if weight]
         
-        for name, item in item_data_table.items():
+        for name, item in filtered_item_data_table.items():
             # Progressive items should be handled elsewhere
             if not item.code or "progressive" in item.tags:
                 continue
             # Add abilites to the pool
-            if "ability" in item.tags and not name in start_inventory_as_set:
+            if "ability" in item.tags:
                 self.normal_itempool.append(name)
                 continue
             # Sort other items types into groups

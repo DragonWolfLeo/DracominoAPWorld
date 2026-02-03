@@ -17,7 +17,7 @@ class StartingShapes(Range):
     """
     display_name = "Starting Shapes"
     default = 7
-    range_start = 1
+    range_start = 3
     range_end = 100
     
 class ExtraShapes(Range):
@@ -44,6 +44,25 @@ class RandomizeOrientations(Toggle):
     Randomize the starting orientation of pieces? If disabled, pieces are oriented with flat side down.
     """
     display_name = "Randomize Orientations"
+
+class EarlySecondDrop(DefaultOnToggle):
+    """
+    Guarantee second drop ability to be in Sphere 1?
+
+    When Starting Drop Method is Gravity, the game could potentially be slow-going if you don't get another
+    drop ability soon. This should help solve that.
+    """
+    display_name = "Early Second Drop"
+
+class EarlyRotate(Toggle):
+    """
+    Guarantee one of your rotate abilities to be in Sphere 1?
+
+    Unnecessary for small/solo games since one will tend to be early anyway.
+
+    Better for large async games.
+    """
+    display_name = "Early Rotate"
 
 # class StartingBoardHeight(Range):
 #     """
@@ -190,6 +209,8 @@ class DracominoOptions(PerGameCommonOptions):
     starting_shapes: StartingShapes
     extra_shapes: ExtraShapes
     randomize_orientations: RandomizeOrientations
+    early_second_drop: EarlySecondDrop
+    early_rotate: EarlyRotate
     # starting_board_height: StartingBoardHeight
     monomino_weight: MonominoWeight
     domino_weight: DominoWeight
