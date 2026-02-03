@@ -28,8 +28,6 @@ class DracominoItemPool:
     normal_itempool:List[str] # All items except junk
     shapes:List[str]
     region_order:List[str] 
-    location_shape_value_costs:List[int]
-    overflow_shape_value:int
 
     def decide_itempools(self, world:World) -> None:
         "Before generating, decide what items go in itempool categories"
@@ -39,9 +37,7 @@ class DracominoItemPool:
         # Set instance variables
         self.normal_itempool = list()
         self.region_order = list()
-        self.location_shape_value_costs = list()
         self.shapes:List[str] = list()
-        self.overflow_shape_value:int = 0
 
         #
         trap_items:List[str] = list()
@@ -142,8 +138,6 @@ class DracominoItemPool:
                 num_blocks_to_fill -= _shape_value
             else:
                 num_extra_shapes -= 1
-            # Add to location shape values
-            self.location_shape_value_costs.append(_shape_value)
 
     def create_item(self, world:World, name: str) -> DracominoItem:
         itemtype = (
@@ -186,7 +180,6 @@ class DracominoItemPool:
         while len(items_to_put_in_pool):
             item = items_to_put_in_pool.pop()
             world.multiworld.push_precollected(item)
-            self.overflow_shape_value += item_data_table[item.name].shape_value
 
         # TODO: I don't think is even possible to get this anymore
         if len(item_pool) > len(world.multiworld.get_unfilled_locations(world.player)):
