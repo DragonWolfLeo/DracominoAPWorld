@@ -151,11 +151,16 @@ class HoldSlots(Range):
 class MaxStackingHeight(Range):
     """
     How high logic expects you to stack blocks to reach tiles.
+
+    If set to board height (currently 20), what's possible is in logic. Setting it lower makes logic more lenient.
+    If you rely on trackers, it's recommended to set it lower otherwise it will create unneeded pressure.
+
     Warning! Setting this higher than your board height can make the game more difficult or even impossible!
+    Only do this if you accept the risk and want to challenge yourself in a solo game.
     """
     display_name = "Max Stacking Height"
-    default = 20
-    range_start = 0
+    default = 15
+    range_start = 1
     range_end = 100
 
 class LineClearLeniency(Range):

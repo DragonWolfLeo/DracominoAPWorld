@@ -85,7 +85,7 @@ def set_rules(world: World, itempool:DracominoItemPool) -> None:
         # Having stack height be as high the goal might cause problems with the randomizer resolving fills
         ACTUAL_MAX_STACKING_HEIGHT = min(options.max_stacking_height.value, options.goal.value)
         
-        height_limit:int = min(BOARD_HEIGHT_UPGRADES, ACTUAL_MAX_STACKING_HEIGHT)
+        height_limit:int = min(BOARD_HEIGHT_UPGRADES, ACTUAL_MAX_STACKING_HEIGHT) - 1 # Subtract one to make sure it's within the board
         location_height = math.floor(placement/BOARD_WIDTH)
         reach_height:int = min(height_limit, location_height)
         SHAPE_VALUE_REDUCTION_WITH_ROTATIONS:int = reach_height*(BOARD_WIDTH - 2)
