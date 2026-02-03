@@ -130,4 +130,4 @@ def set_rules(world: World, itempool:DracominoItemPool) -> None:
                 set_rule(location, create_item_pickup_rule(location.shape_value_to_reach, location.placement))
 
     # Set the win conditions
-    multiworld.completion_condition[player] = create_line_clear_rule(options.goal.value * BOARD_WIDTH)
+    multiworld.completion_condition[player] = create_line_clear_rule((options.goal.value + options.line_clear_leniency.value) * BOARD_WIDTH)

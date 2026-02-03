@@ -1,4 +1,4 @@
-VERSION:str = "0.2.0"
+VERSION:str = "0.2.1"
 MIN_GAME_VERSION:str = "0.2.0"
 
 BOARD_WIDTH:int = 10

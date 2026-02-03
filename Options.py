@@ -22,7 +22,7 @@ class StartingShapes(Range):
     
 class ExtraShapes(Range):
     """
-    Extra shapes to add to the pool to make goaling easier/safer
+    Extra shapes to add to the pool. This, as well as Line Clear Leniency, makes goaling easier/safer.
     """
     display_name = "Extra Shapes"
     default = 20
@@ -158,6 +158,20 @@ class MaxStackingHeight(Range):
     range_start = 0
     range_end = 100
 
+class LineClearLeniency(Range):
+    """
+    How many lines worth of extra blocks are needed for line clears to be considered in logic.
+
+    If zero, lines require the exact number of blocks it takes to clear them and all lines before.
+    This is not as strict as it sounds since stacking and clearing higher lines out-of-logic is still possible.
+
+    If you rely on trackers, it's recommended to set higher than zero.
+    """
+    display_name = "Line Clear Leniency"
+    default = 2
+    range_start = 0
+    range_end = 10
+
 class DeathOnRestart(Toggle):
     """
     When Death Link is enabled, send a death whenever you reset your board?
@@ -179,6 +193,7 @@ class DracominoOptions(PerGameCommonOptions):
     pentomino_weight: PentominoWeight
     next_piece_slots: NextPieceSlots
     hold_slots: HoldSlots
+    line_clear_leniency: LineClearLeniency
     max_stacking_height: MaxStackingHeight
     # trap_items: TrapItems
     death_link: DeathLink

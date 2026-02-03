@@ -96,7 +96,7 @@ class DracominoItemPool:
             world.multiworld.push_precollected(self.create_item(world, shape_name))
                 
         # Calculate number of blocks so we have enough shapes to 
-        num_blocks_to_fill:int = options.goal.value*BOARD_WIDTH
+        num_blocks_to_fill:int = (options.goal.value + options.line_clear_leniency)*BOARD_WIDTH
 
         # Subtract blocks that are already in start inventory
         for item in world.multiworld.precollected_items[world.player]:
