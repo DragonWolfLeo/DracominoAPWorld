@@ -1,5 +1,6 @@
 from typing import Dict, List, NamedTuple, Set, Callable, Optional
 from BaseClasses import MultiWorld, Region, Entrance, CollectionState
+from Options import OptionError
 from .Locations import location_data_table, DracominoLocation
 from .ItemPool import DracominoItemPool
 from .Options import DracominoOptions
@@ -54,37 +55,23 @@ def create_regions(multiworld: MultiWorld, player: int, options:DracominoOptions
     place_locations("line_clear", NUM_LINE_LOCATIONS, lambda index: (index+1) * BOARD_WIDTH)
 
     # Calculate location shape value multiplier to spread out item pickups across the height
-    def calc_item_pickup_shape_value_multiplier() -> float:
+    def calc_item_pickup_location_interval() -> float:
         HEIGHT_LIMIT = min(BOARD_HEIGHT>>1, options.max_stacking_height.value) # Extends placement vertically by half board height
         total_locations = len(itempool.normal_itempool)
         item_pickup_locations = total_locations - NUM_LINE_LOCATIONS
 
-        shape_value_in_item_pickups = 0
-        total_shape_value = -itempool.overflow_shape_value # Overflow shape value is part of shape value costs so let's subtract it out
-        for i, cost in enumerate(itempool.location_shape_value_costs):
-            # The first chunk of location costs is used for item pickups, while the rest is just added to the total in existence
-            if i < item_pickup_locations:
-                shape_value_in_item_pickups += cost
-            total_shape_value += cost
-
-        item_pickup_location_ratio = shape_value_in_item_pickups/total_shape_value
-        shape_value_balancer = LINE_GOAL*BOARD_WIDTH/max(1, total_shape_value) # Stretches location distribution to fit goal region
+        average_interval = LINE_GOAL*BOARD_WIDTH/max(1, item_pickup_locations) # Stretches location distribution to fit goal region
         height_extension_multiplier = (LINE_GOAL + HEIGHT_LIMIT)/LINE_GOAL # Extends the height limit of pickups above the goal line
-        return shape_value_balancer * height_extension_multiplier / item_pickup_location_ratio
+        return average_interval * height_extension_multiplier
 
     # Calculate how far item pickups are
-    _SHAPE_VALUE_MULTIPLIER = calc_item_pickup_shape_value_multiplier()
+    _LOCATION_INTERVAL = calc_item_pickup_location_interval()
+    if _LOCATION_INTERVAL < 1.0:
+        # If smaller than 1, pickups will overlap, and I rather them don't
+        raise OptionError(f"{world.player_name} (Dracomino): Too little space for locations. Increase goal or decrease extra_shapes!")
     def item_pickup_shape_value(index:int) -> int:
-        value:int = 0
-        i:int = 0
-        while i < index and i < len(itempool.location_shape_value_costs):
-            value += itempool.location_shape_value_costs[i]
-            i += 1
-        if i < len(itempool.location_shape_value_costs):
-            # Randomize the position of each placement
-            offset_range:int = itempool.location_shape_value_costs[i]
-            value += world.random.randint(0, offset_range-1)
-        return math.floor(value*_SHAPE_VALUE_MULTIPLIER)
+        # Randomize the position of each placement
+        return world.random.randint(math.floor(_LOCATION_INTERVAL*index), math.floor(_LOCATION_INTERVAL*(index+1))-1)
     
     # Place item-pickup locations
     place_locations("item_pickup", len(itempool.normal_itempool) - NUM_LINE_LOCATIONS, item_pickup_shape_value)
