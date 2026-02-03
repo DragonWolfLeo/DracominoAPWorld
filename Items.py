@@ -54,6 +54,7 @@ def generate_item_name_groups() -> Dict[str, Set[str]]:
     ret["Piece"] = ret["Shape"]
     ret["Dracomino"] = ret["Shape"]
     ret["Mino"] = ret["Shape"]
+    ret["Polyomino"] = ret["Shape"]
     ret.setdefault("Ability", {k for k, v in item_data_table.items() if "ability" in v.tags})
     return ret
     
