@@ -22,13 +22,15 @@ def generate_item_map() -> Dict[str, DracominoItemData]:
         name:str = v[1]
         tags: Set[str] = set(v[2])
 
-        classification:IC = (
-            IC.progression if "progression" in tags else
-            IC.progression_skip_balancing if "progression_skip_balancing" in tags else
-            IC.useful if "useful" in tags else
-            IC.trap if "trap" in tags else
-            IC.filler
-        )
+        classification:IC = IC.filler
+        if "progression" in tags:
+            classification |= IC.progression
+        if "progression_skip_balancing" in tags:
+            classification |= IC.progression_skip_balancing
+        if "useful" in tags:
+            classification |= IC.useful
+        if "trap" in tags:
+            classification |= IC.trap
 
         shape_value:int = 0
         for shape_type, value in SHAPE_VALUES.items():

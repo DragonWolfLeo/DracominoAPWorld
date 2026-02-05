@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from Options import Toggle, DefaultOnToggle, Choice, Range, NamedRange, DeathLink, PerGameCommonOptions
+from Options import Toggle, DefaultOnToggle, Choice, Range, NamedRange, DeathLink, PerGameCommonOptions, OptionGroup, OptionSet
+from .Items import item_data_table
 
 class Goal(Range):
     """
@@ -167,6 +168,30 @@ class HoldSlots(Range):
     range_start = 0
     range_end = 10
 
+# class AbilitySet(Choice):
+#     """
+#     Which set of abilities to add to the item pool
+
+#     Custom: All abilities listed in Ability Whitelist
+#     Classic: Abilities that are common of falling block puzzle game
+#     Dracomino: TODO
+#     Randomized: TODO
+#     """
+#     display_name = "Ability Set"
+#     default = 1
+#     option_custom = 0
+#     option_classic = 1
+#     option_dracomino = 2
+#     option_randomized = 10
+
+class AbilityWhitelist(OptionSet):
+    """
+    Abilities that are allowed to be in the item pool
+    """
+    display_name = "Ability Whitelist"
+    default = {name for name, item in item_data_table.items() if "ability" in item.tags and not "progressive" in item.tags}
+    valid_keys = default
+
 class MaxStackingHeight(Range):
     """
     How high logic expects you to stack blocks to reach tiles.
@@ -219,11 +244,39 @@ class DracominoOptions(PerGameCommonOptions):
     pentomino_weight: PentominoWeight
     next_piece_slots: NextPieceSlots
     hold_slots: HoldSlots
+    # ability_set: AbilitySet
+    ability_whitelist: AbilityWhitelist
     line_clear_leniency: LineClearLeniency
     max_stacking_height: MaxStackingHeight
     # trap_items: TrapItems
     death_link: DeathLink
     death_on_restart: DeathOnRestart
+
+dracomino_option_groups = [
+    OptionGroup("Shape Options", [
+        StartingShapes,
+        ExtraShapes,
+        RandomizeOrientations,
+        MonominoWeight,
+        DominoWeight,
+        TrominoWeight,
+        TetrominoWeight,
+        PentominoWeight,
+    ]),
+    OptionGroup("Ability Options", [
+        StartingDropMethod,
+        EarlySecondDrop,
+        EarlyRotate,
+        NextPieceSlots,
+        HoldSlots,
+        # AbilitySet,
+        AbilityWhitelist,
+    ]),
+    OptionGroup("Logic Options", [
+        LineClearLeniency,
+        MaxStackingHeight,
+    ]),
+]
 
 dracomino_option_presets = {
     "Classic Tetrominos": {

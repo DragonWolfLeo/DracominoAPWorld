@@ -1,7 +1,7 @@
 from typing import Dict, Set, List, Iterable
 
 from worlds.AutoWorld import World, WebWorld
-from .Options import DracominoOptions, dracomino_option_presets
+from .Options import DracominoOptions, dracomino_option_presets, dracomino_option_groups
 from . import Regions, Rules, ItemPool, Util
 from .Constants import VERSION, MIN_GAME_VERSION, BOARD_WIDTH
 from .Locations import DracominoLocation, location_data_table, location_name_to_id
@@ -20,6 +20,7 @@ class DracominoWeb(WebWorld):
         ["Dragon Wolf Leo"]
     )]
     options_presets = dracomino_option_presets
+    option_groups = dracomino_option_groups
     theme = "stone"
 
 class DracominoWorld(World):

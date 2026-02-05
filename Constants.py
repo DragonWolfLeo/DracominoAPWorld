@@ -13,12 +13,12 @@ SHAPE_VALUES = {
 
 ITEMS = [
     # Abilities (1-100)
-    [1,   "Gravity",                  [ "useful", "ability", "drop" ] ],
-    [2,   "Soft Drop",                [ "useful", "ability", "drop" ] ],
-    [3,   "Hard Drop",                [ "useful", "ability", "drop" ] ],
-    [4,   "Rotate Clockwise",         [ "progression", "ability", "rotate" ] ],
-    [5,   "Rotate Counterclockwise",  [ "progression", "ability", "rotate" ] ],
-    [6,   "Ghost Piece",              [ "useful", "ability" ] ],
+    [1,   "Gravity",                  [ "useful", "trap", "ability", "classic", "drop" ] ],
+    [2,   "Soft Drop",                [ "useful", "ability", "classic", "drop" ] ],
+    [3,   "Hard Drop",                [ "useful", "ability", "classic", "drop" ] ],
+    [4,   "Rotate Clockwise",         [ "progression", "useful", "ability", "classic", "rotate" ] ],
+    [5,   "Rotate Counterclockwise",  [ "progression", "useful", "ability", "classic", "rotate" ] ],
+    [6,   "Ghost Piece",              [ "useful", "ability", "classic" ] ],
 
     # Progressive Items (101-200)
     [101, "Next Piece Slot",          [ "useful", "ability", "progressive" ] ],

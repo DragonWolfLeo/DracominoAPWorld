@@ -49,21 +49,41 @@ class DracominoItemPool:
             else "Gravity"
         ] = 1
 
-        start_inventory_as_set:FrozenSet = frozenset(options.start_inventory.value.keys())
+        start_inventory_as_set:FrozenSet[str] = frozenset(options.start_inventory.value.keys())
 
-        # Filter items # TODO: Do filtering here when ability sets are implemented
-        blacklist:Set[str] = set(name for name in start_inventory_as_set if (
-            "ability" in item_data_table[name].tags and not "progressive" in item_data_table[name].tags
-        )) # Don't add non-progressive abilities that are already in start inventory
+        # Filter items
+        ABILITY_SET = "classic" # TODO: Replace with option when there are more ability sets
+        NONPROGRESSIVE_ABILITIES = {name for name, item in item_data_table.items() if (
+            "ability" in item.tags and not "progressive" in item.tags
+        )}
+        ability_set:Set[str] = {name for name in NONPROGRESSIVE_ABILITIES if ABILITY_SET in item_data_table[name].tags}
+        ability_set.intersection_update(options.ability_whitelist.value)
+        # Require rotate to be in pool
+        if not len({name for name in start_inventory_as_set|ability_set if "rotate" in item_data_table[name].tags}):
+            print(f"{world.player_name} (Dracomino): No rotate ability in pool, so adding them.")
+            _rotates = {name for name, item in item_data_table.items() if item.tags.issuperset({"rotate", "classic"})}
+            ability_set.update(_rotates)
+            options.ability_whitelist.value.update(_rotates)
+
+        blacklist:Set[str] = (
+            # Blacklist nonprogressive abilities already in start inventory
+            NONPROGRESSIVE_ABILITIES.intersection(start_inventory_as_set) |
+            # Blacklist excluded abilities
+            {name for name in NONPROGRESSIVE_ABILITIES if not name in ability_set}
+        )
         filtered_item_data_table:Dict[str, DracominoItemData] = {name: item for name, item in item_data_table.items() if not name in blacklist}
 
         # Choose early items
         def _set_early_item(item_name:str):
             world.multiworld.early_items[world.player][item_name] = 1
         if options.early_rotate.value:
-            _set_early_item(world.random.choice([name for name, item in filtered_item_data_table.items() if "rotate" in item.tags]))
+            _rotates = [name for name, item in filtered_item_data_table.items() if "rotate" in item.tags]
+            if len(_rotates):
+                _set_early_item(world.random.choice(_rotates))
         if options.early_second_drop.value:
-            _set_early_item(world.random.choice([name for name, item in filtered_item_data_table.items() if "drop" in item.tags]))
+            _drops = [name for name, item in filtered_item_data_table.items() if "drop" in item.tags]
+            if len(_drops):
+                _set_early_item(world.random.choice(_drops))
 
         # Build shape whitelist
         whitelisted_shape_types = [shape_type for shape_type, weight in SHAPE_WEIGHTS.items() if weight]
@@ -123,7 +143,6 @@ class DracominoItemPool:
         # for _ in range(options.trap_items.value):
         #     trap_name = world.random.choice(trap_items) if len(trap_items) else "Nothing"
         #     self.normal_itempool.append(trap_name)
-        #     # TODO: Any trap with shape value must be progression!
         #     num_blocks_to_fill -= item_data_table[trap_name].shape_value # In case traps add/are blocks
 
         # Create shapes until there's enough blocks filled plus extra shapes
