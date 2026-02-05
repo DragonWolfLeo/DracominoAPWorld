@@ -104,6 +104,7 @@ class DracominoWorld(World):
         hint_data[self.player] = hint_information
 
     def fill_slot_data(self):
+        # Create item placement data
         item_pickup_placements:List[int] = []
         EXISTING_LOCATIONS = {location.name for location in self.multiworld.get_locations(self.player)}
         i = 1
@@ -118,7 +119,7 @@ class DracominoWorld(World):
         for v in item_pickup_placements:
             # Keep this here a little longer so I can be sure it doesn't happen anymore
             assert item_pickup_placements.count(v) == 1, \
-                f"{self.player_name} (Dracomino) Found multiple location placement {v} in slot data; {item_pickup_placements}"
+                f"{self.player_name} (Dracomino) Found multiple location placement {v} in slot data; {item_pickup_placements}; Report to dev if seeing this!"
         slot_data = {
             "generator_version":        VERSION,
             "min_game_version":         MIN_GAME_VERSION,
@@ -128,5 +129,8 @@ class DracominoWorld(World):
             # "starting_board_height":    self.options.starting_board_height.value,
             "item_pickup_placements":   item_pickup_placements,
             "randomize_orientations":   bool(self.options.randomize_orientations.value),
+            # Things that will probably only be needed by trackers (added v0.2.1)
+            "line_clear_leniency":      self.options.line_clear_leniency.value,
+            "max_stacking_height":      self.options.max_stacking_height.value,
         }
         return slot_data
