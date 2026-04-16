@@ -145,7 +145,7 @@ class TrapWeight(Range):
     Ratio of traps to all shapes
     """
     display_name = "Trap Weight"
-    default = 0
+    default = 1
     range_start = 0
     range_end = 100
 
