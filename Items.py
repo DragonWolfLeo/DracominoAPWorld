@@ -20,7 +20,7 @@ def generate_item_map() -> Dict[str, DracominoItemData]:
     for v in ITEMS:
         code:int = v[0]
         name:str = v[1]
-        tags: Set[str] = set(v[2])
+        tags: Set[str] = set(v[3])
 
         classification:IC = IC.filler
         if "progression" in tags:
@@ -38,8 +38,8 @@ def generate_item_map() -> Dict[str, DracominoItemData]:
                 shape_value = value
                 break
 
-        poor_height:int = v[3] if len(v) > 3 else 0
-        safe_height:int = v[4] if len(v) > 4 else 0
+        poor_height:int = v[4] if len(v) > 4 else 0
+        safe_height:int = v[5] if len(v) > 5 else 0
 
         if not "deprecated" in tags:
             ret.setdefault(name, DracominoItemData(code, classification, tags, shape_value, poor_height, safe_height))

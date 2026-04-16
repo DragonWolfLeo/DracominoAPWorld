@@ -3,7 +3,7 @@ from worlds.AutoWorld import World
 from BaseClasses import ItemClassification as IC
 from .Items import item_data_table, item_name_to_id, DracominoItem, DracominoItemData
 from .Options import DracominoOptions
-from .Constants import BOARD_WIDTH
+from .Constants import BOARD_WIDTH, RARITY_WEIGHTS
 from . import Util
 
 class ShapeGenerator:
@@ -25,9 +25,11 @@ class ShapeGenerator:
         self.current_bag.extend(self.shape_pool)
     
 class DracominoItemPool:
-    normal_itempool:List[str] # All items except junk
-    shapes:List[str]
-    region_order:List[str] 
+    # Class variables; intended to be overwritten
+    normal_itempool:List[str] = [] # All items except junk
+    shapes:List[str] = [name for name, item in item_data_table.items() if "shape" in item.tags]
+    region_order:List[str] = []
+    item_counts:Dict[int, int] = {}
 
     def decide_itempools(self, world:World) -> None:
         "Before generating, decide what items go in itempool categories"
@@ -38,6 +40,7 @@ class DracominoItemPool:
         self.normal_itempool = list()
         self.region_order = list()
         self.shapes:List[str] = list()
+        self.item_counts:Dict[int, int] = {}
 
         #
         trap_items:List[str] = list()
@@ -89,8 +92,8 @@ class DracominoItemPool:
         whitelisted_shape_types = [shape_type for shape_type, weight in SHAPE_WEIGHTS.items() if weight]
         
         for name, item in filtered_item_data_table.items():
-            # Progressive items should be handled elsewhere
-            if not item.code or "progressive" in item.tags:
+            # Progressive and tutorial items should be handled elsewhere
+            if not item.code or "progressive" in item.tags or "tutorial" in item.tags:
                 continue
             # Add abilites to the pool
             if "ability" in item.tags:
@@ -139,24 +142,68 @@ class DracominoItemPool:
         for _ in range(options.hold_slots.value):
             self.normal_itempool.append("Hold Slot")
 
-        # # Create traps
-        # for _ in range(options.trap_items.value):
-        #     trap_name = world.random.choice(trap_items) if len(trap_items) else "Nothing"
-        #     self.normal_itempool.append(trap_name)
-        #     num_blocks_to_fill -= item_data_table[trap_name].shape_value # In case traps add/are blocks
-
         # Create shapes until there's enough blocks filled plus extra shapes
         num_extra_shapes = options.extra_shapes.value
+        _num_shapes:int = 0
         while num_blocks_to_fill > 0 or num_extra_shapes > 0:
             shape_type = world.random.choice(shape_type_weighted_list)
             shape_name = shape_generators[shape_type].create(world)
             # Add shape to the pool and subtract its block value
             self.normal_itempool.append(shape_name)
+            _num_shapes += 1
             _shape_value = item_data_table[shape_name].shape_value
             if num_blocks_to_fill > 0:
                 num_blocks_to_fill -= _shape_value
             else:
                 num_extra_shapes -= 1
+
+        # Get weight of all shapes together
+        _shape_weight:int = 0
+        for v in SHAPE_WEIGHTS.values():
+            _shape_weight += v
+        # Come up with number of traps to make
+        _traps_to_make:int = round(_num_shapes * options.trap_weight.value / _shape_weight)
+
+        # Create traps
+        trap_bag:List[str] = []
+        for trap_name in trap_items:
+            _num = RARITY_WEIGHTS["common"]
+            for k, v in RARITY_WEIGHTS.items():
+                if k in item_data_table[trap_name].tags:
+                    _num = v
+                    break
+            for _ in range(_num):
+                trap_bag.append(trap_name)
+        trap_generator = ShapeGenerator(trap_bag)
+        for _ in range(_traps_to_make):
+            trap_name = trap_generator.create(world)
+            self.normal_itempool.append(trap_generator.create(world))
+            num_blocks_to_fill -= item_data_table[trap_name].shape_value # In case traps add/are blocks (Right now none are)
+
+        # Create tutorials (normal tutorials are twice as common as logic ones)
+        tutorial_generator = ShapeGenerator(["Tutorial", "Tutorial", "Logic Tutorial"])
+        for i in range(options.tutorials.value):
+            # Guarantee first 2
+            if i == 0:
+                self.normal_itempool.append("Tutorial")
+            elif i == 1:
+                self.normal_itempool.append("Logic Tutorial")
+            else:
+                self.normal_itempool.append(tutorial_generator.create(world))
+
+        # Count everything we have
+        for item_name in self.normal_itempool:
+            _id = item_name_to_id[item_name]
+            if _id:
+                self.item_counts.setdefault(_id, 0)
+                self.item_counts[_id] += 1
+
+        # Count the precollected stuff too
+        for item in world.multiworld.precollected_items[world.player]:
+            _id = item.code
+            if _id:
+                self.item_counts.setdefault(_id, 0)
+                self.item_counts[_id] += 1
 
     def create_item(self, world:World, name: str) -> DracominoItem:
         itemtype = (

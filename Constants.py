@@ -1,5 +1,5 @@
-VERSION:str = "0.2.1"
-MIN_GAME_VERSION:str = "0.2.0"
+VERSION:str = "0.3.0"
+MIN_GAME_VERSION:str = "0.3.0"
 
 BOARD_WIDTH:int = 10
 BOARD_HEIGHT:int = 20
@@ -10,63 +10,90 @@ SHAPE_VALUES = {
     "tetromino": 4,
     "pentomino": 5,
 }
+RARITY_WEIGHTS = {
+    "common": 8,
+    "uncommon": 4,
+    "rare": 2,
+    "very_rare": 1,
+}
 
 ITEMS = [
     # Abilities (1-100)
-    [1,   "Gravity",                  [ "useful", "trap", "ability", "classic", "drop" ] ],
-    [2,   "Soft Drop",                [ "useful", "ability", "classic", "drop" ] ],
-    [3,   "Hard Drop",                [ "useful", "ability", "classic", "drop" ] ],
-    [4,   "Rotate Clockwise",         [ "progression", "useful", "ability", "classic", "rotate" ] ],
-    [5,   "Rotate Counterclockwise",  [ "progression", "useful", "ability", "classic", "rotate" ] ],
-    [6,   "Ghost Piece",              [ "useful", "ability", "classic" ] ],
+    [1,   "Gravity",                  "gravity",                    [ "useful", "trap", "ability", "classic", "drop" ] ],
+    [2,   "Soft Drop",                "softdrop",                   [ "useful", "ability", "classic", "drop" ] ],
+    [3,   "Hard Drop",                "harddrop",                   [ "useful", "ability", "classic", "drop" ] ],
+    [4,   "Rotate Clockwise",         "rotate_clockwise",           [ "progression", "useful", "ability", "classic", "rotate" ] ],
+    [5,   "Rotate Counterclockwise",  "rotate_counterclockwise",    [ "progression", "useful", "ability", "classic", "rotate" ] ],
+    [6,   "Ghost Piece",              "ghostpiece",                 [ "useful", "ability", "classic" ] ],
+    [7,   "Kick",                     "kick",                       [ "useful", "ability", "classic" ] ],
+    # [8,   "Vertical Shove",           "shove_vertical",             [ "useful", "ability" ] ],
+    # [9,   "Horizontal Shove",         "shove_horizontal",           [ "useful", "trap", "ability" ] ],
+    [10,  "Lock Delay",               "lockdelay",                  [ "useful", "ability", "classic" ] ],
 
     # Progressive Items (101-200)
-    [101, "Next Piece Slot",          [ "useful", "ability", "progressive" ] ],
-    [102, "Hold Slot",                [ "useful", "ability", "progressive" ] ],
+    [101, "Next Piece Slot",          "nextpiece_slot",             [ "useful", "ability", "progressive" ] ],
+    [102, "Hold Slot",                "hold_slot",                  [ "useful", "ability", "progressive" ] ],
     
     # Traps Items (201-300)
-    [201, "UNIMPLEMENTED TRAP",       [ "trap" ] ],
+    [201, "Tutorial",                 "tutorial",                   [ "trap", "useful", "tutorial" ] ],
+    [202, "Logic Tutorial",           "tutorial_logic",             [ "trap", "useful", "tutorial" ] ],
+    [203, "Time to Fish!",            "fishing",                    [ "trap" ] ],
+    [204, "Egg",                      "egg",                        [ "trap", "rare" ] ],
+    [205, "Curse",                    "enchantment_curse",          [ "trap" ] ],
+    [206, "Legendary Enchantment",    "enchantment_legendary",      [ "trap" ] ],
+    [207, "Epic Enchantment",         "enchantment_epic",           [ "trap" ] ],
+    [208, "Rare Enchantment",         "enchantment_rare",           [ "trap", "uncommon" ] ],
+    [209, "Medium-Rare Enchantment",  "enchantment_mediumrare",     [ "trap", "very_rare" ] ],
+    [210, "Well Done!",               "enchantment_welldone",       [ "trap" ] ],
+    [211, "Crystal Trap",             "crystal_trap",               [ "trap", "rare" ] ],
+    [212, "Invert Colors Trap",       "invertcolors_trap",          [ "trap", "very_rare" ] ],
+    [213, "Water Trap",               "water_trap",                 [ "trap" ] ],
+    [214, "Pixellation Trap",         "pixellation_trap",           [ "trap", "rare"  ] ],
+    [215, "Fracture Trap",            "fracture_trap",              [ "trap", "uncommon" ] ],
+    [216, "Zoom Trap",                "zoom_trap",                  [ "trap", "uncommon", ] ],
+    [217, "Impatience Trap",          "impatience_trap",            [ "trap", "uncommon" ] ],
+    [218, "In Space!",                "space_trap",                 [ "trap", "uncommon" ] ],
     
     # Shapes (301-)                                                                     Last two values are poor height, safe height
-    [301, "Monomino",       [ "progression_skip_balancing", "shape", "monomino" ],                                             1, 1],
+    [301, "Monomino",       "", [ "progression_skip_balancing", "shape", "monomino" ],                                             1, 1],
 
-    [302, "Domino",         [ "progression_skip_balancing", "shape", "domino" ],                                               1, 2],
+    [302, "Domino",         "", [ "progression_skip_balancing", "shape", "domino" ],                                               1, 2],
 
-    [303, "I Tromino",      [ "progression_skip_balancing", "shape", "tromino" ],                                              1, 3],
-    [304, "L Tromino",      [ "progression_skip_balancing", "shape", "tromino", "has_corner_gap" ],                            1, 2],
+    [303, "I Tromino",      "", [ "progression_skip_balancing", "shape", "tromino" ],                                              1, 3],
+    [304, "L Tromino",      "", [ "progression_skip_balancing", "shape", "tromino", "has_corner_gap" ],                            1, 2],
 
-    [305, "I Tetromino",    [ "progression_skip_balancing", "shape", "tetromino" ],                                            1, 4],
-    [306, "O Tetromino",    [ "progression_skip_balancing", "shape", "tetromino" ],                                            2, 2],
-    [307, "T Tetromino",    [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 3],
-    [308, "J Tetromino",    [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [309, "L Tetromino",    [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [310, "S Tetromino",    [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 2],
-    [311, "Z Tetromino",    [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 2],
+    [305, "I Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino" ],                                            1, 4],
+    [306, "O Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino" ],                                            2, 2],
+    [307, "T Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 3],
+    [308, "J Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [309, "L Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [310, "S Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 2],
+    [311, "Z Tetromino",    "", [ "progression_skip_balancing", "shape", "tetromino", "has_corner_gap" ],                          1, 2],
 
-    [312, "I Pentomino",    [ "progression_skip_balancing", "shape", "pentomino" ],                                            1, 5],
-    [313, "U Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_second_tile_gap" ],                     2, 3],
-    [314, "T Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   2, 3],
-    [315, "X Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 2],
-    [316, "V Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [317, "W Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   2, 3],
-    [318, "L Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 4],
-    [319, "J Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 4],
-    [320, "S Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [321, "Z Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [322, "F Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [323, "F' Pentomino",   [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [324, "N Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [325, "N' Pentomino",   [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [326, "P Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 3],
-    [327, "Q Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 3],
-    [328, "Y Pentomino",    [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
-    [329, "Y' Pentomino",   [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [312, "I Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino" ],                                            1, 5],
+    [313, "U Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_second_tile_gap" ],                     2, 3],
+    [314, "T Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   2, 3],
+    [315, "X Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 2],
+    [316, "V Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [317, "W Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   2, 3],
+    [318, "L Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 4],
+    [319, "J Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 4],
+    [320, "S Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [321, "Z Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [322, "F Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [323, "F' Pentomino",   "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [324, "N Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [325, "N' Pentomino",   "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [326, "P Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 3],
+    [327, "Q Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap" ],                          2, 3],
+    [328, "Y Pentomino",    "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
+    [329, "Y' Pentomino",   "",  [ "progression_skip_balancing", "shape", "pentomino", "has_corner_gap", "has_second_tile_gap" ],   1, 3],
 ]
 
 LOCATIONS = [
     # Line Clears (1-1000)
-    *([i,        f"Line {i} Cleared", [ "line_clear" ]] for i in range(1, 1001)),
+    *([i,        f"Line {i} Cleared", "", [ "line_clear" ]] for i in range(1, 1001)),
     
     # Shape Clears (10001-20000)
-    *([i + 10000, f"Coin {i}", [ "item_pickup" ]] for i in range(1, 10001)),
+    *([i + 10000, f"Coin {i}", "", [ "item_pickup" ]] for i in range(1, 10001)),
 ]

@@ -140,15 +140,23 @@ class PentominoWeight(NamedRange):
         "per unique shapes": 18,
     }
 
-# class TrapItems(Range):
-#     """
-#     NOT IMPLEMENTED
-#     Number of traps present in the world.
-#     """
-#     display_name = "Traps"
-#     default = 0
-#     range_start = 0
-#     range_end = 100
+class TrapWeight(Range):
+    """
+    Ratio of traps to all shapes
+    """
+    display_name = "Trap Weight"
+    default = 0
+    range_start = 0
+    range_end = 100
+
+class Tutorials(Range):
+    """
+    How many times do you need to see the tutorial?
+    """
+    display_name = "Tutorials"
+    default = 2
+    range_start = 0
+    range_end = 20
 
 class NextPieceSlots(Range):
     """
@@ -187,14 +195,17 @@ class HoldSlots(Range):
 class AbilityWhitelist(OptionSet):
     """
     Abilities that are allowed to be in the item pool
+
+    Valid Abilities: 
     """
     display_name = "Ability Whitelist"
-    default = {name for name, item in item_data_table.items() if "ability" in item.tags and not "progressive" in item.tags}
-    valid_keys = default
+    valid_keys = {name for name, item in item_data_table.items() if "ability" in item.tags and not "progressive" in item.tags}
+    default = valid_keys
+    __doc__ += ", ".join([f"\"{name}\"" for name in valid_keys])
 
 class MaxStackingHeight(Range):
     """
-    How high logic expects you to stack blocks to reach tiles.
+    How high logic expects you to stack blocks to reach coins. This is NOT relevant to line clear locations.
 
     If set to board height (currently 20), what's possible is in logic. Setting it lower makes logic more lenient.
     If you rely on trackers, it's recommended to set it lower otherwise it will create unneeded pressure.
@@ -223,9 +234,21 @@ class LineClearLeniency(Range):
 
 class DeathOnRestart(Toggle):
     """
-    When Death Link is enabled, send a death whenever you reset your board?
+    When Death Link is enabled, send a death whenever you reset your board
     """
     display_name = "Send Death on Restart"
+
+class TrapLink(Toggle):
+    """
+    When you receive a trap, everyone who enabled trap link receives a trap. Of course, the reverse is true too.
+    """
+    display_name = "Trap Link"
+
+class EnergyLink(DefaultOnToggle):
+    """
+    Allow contributing to the Energy Link pool by clearing blocks
+    """
+    display_name = "Energy Link"
 
 @dataclass
 class DracominoOptions(PerGameCommonOptions):
@@ -248,9 +271,12 @@ class DracominoOptions(PerGameCommonOptions):
     ability_whitelist: AbilityWhitelist
     line_clear_leniency: LineClearLeniency
     max_stacking_height: MaxStackingHeight
-    # trap_items: TrapItems
+    trap_weight: TrapWeight
+    tutorials: Tutorials
     death_link: DeathLink
     death_on_restart: DeathOnRestart
+    trap_link: TrapLink
+    energy_link: EnergyLink
 
 dracomino_option_groups = [
     OptionGroup("Shape Options", [
@@ -272,9 +298,19 @@ dracomino_option_groups = [
         # AbilitySet,
         AbilityWhitelist,
     ]),
+    OptionGroup("Other Items", [
+        Tutorials,
+        TrapWeight,
+    ]),
     OptionGroup("Logic Options", [
         LineClearLeniency,
         MaxStackingHeight,
+    ]),
+    OptionGroup("Link Options", [
+        DeathLink,
+        DeathOnRestart,
+        TrapLink,
+        EnergyLink,
     ]),
 ]
 

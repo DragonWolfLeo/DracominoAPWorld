@@ -19,7 +19,7 @@ def generate_location_data() -> Dict[str, DracominoLocationData]:
     for v in LOCATIONS:
         address:int = v[0]
         name:str = v[1]
-        tags:Set = set(v[2])
+        tags:Set = set(v[3])
 
         ret.setdefault(name, DracominoLocationData(address, tags, name))
     return ret
