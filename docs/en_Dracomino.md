@@ -20,3 +20,7 @@ The goal is to clear a number of lines in a single run. You can set this goal in
 
 Your checks are clearing lines and coins scattered throughout your board. As you clear lines, more
 coins are revealed.
+
+## Was AI used to develop this?
+
+No.
